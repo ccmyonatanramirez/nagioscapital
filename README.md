@@ -1,6 +1,6 @@
 # Instalación y configuración de NRPE en el cliente Linux (compilado desde código fuente)
 
-Este documento describe el proceso real usado para dejar listo el **lado cliente** de NRPE en un host Linux (Ubuntu/Debian o CentOS/RHEL): compilación desde código fuente de los Nagios Plugins y de NRPE, creación del usuario de servicio, configuración de `nrpe.cfg`, y puesta en marcha como servicio systemd.
+Este documento describe el proceso real usado para dejar listo el **lado cliente** de NRPE en un host Linux (Ubuntu/Debian o CentOS/RHEL): compilación desde código fuente de los Nagios Plugins y de NRPE, creación del usuario de servicio, configuración de `nrpe.cfg`, y puesta en marcha como servicio.
 
 Los paquetes fuente utilizados están alojados en el repositorio interno:
 
@@ -186,14 +186,14 @@ Con esto confirmado, el host queda listo del lado cliente — solo falta que des
 
 ## Solución de problemas comunes
 
-| Síntoma | Causa probable | Solución |
-|---|---|---|
-| `./configure` falla por falta de OpenSSL | Faltan las librerías de desarrollo | Confirmar instalación de `openssl-devel` (CentOS) / `libssl-dev` (Ubuntu) |
-| `make install-init` no crea el servicio | Versión de NRPE sin soporte systemd, o target no soportado en esa distro | Revisar manualmente `/etc/systemd/system/nrpe.service` tras la instalación, o crear la unidad a mano si no se generó |
-| `Connection refused` al probar `check_nrpe` | El servicio no está corriendo | `systemctl status nrpe`, revisar `journalctl -xeu nrpe` |
-| `Connection timed out` | Firewall bloqueando el puerto 5666 | Revisar reglas de `firewalld`/`ufw` y de cualquier firewall de red intermedio |
-| SELinux bloquea la conexión (CentOS) | Puerto no registrado en el contexto `nrpe_port_t` | `semanage port -a -t nrpe_port_t -p tcp 5666` |
-| Permisos denegados al ejecutar plugins | El usuario `nagios` no tiene permisos sobre algún recurso que consulta el plugin (ej. discos, procesos) | Revisar permisos del recurso o agregar el usuario `nagios` al grupo correspondiente |
+| Síntoma                                     | Causa probable                                                                                          | Solución                                                                                                             |
+| ------------------------------------------- | ------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
+| `./configure` falla por falta de OpenSSL    | Faltan las librerías de desarrollo                                                                      | Confirmar instalación de `openssl-devel` (CentOS) / `libssl-dev` (Ubuntu)                                            |
+| `make install-init` no crea el servicio     | Versión de NRPE sin soporte systemd, o target no soportado en esa distro                                | Revisar manualmente `/etc/systemd/system/nrpe.service` tras la instalación, o crear la unidad a mano si no se generó |
+| `Connection refused` al probar `check_nrpe` | El servicio no está corriendo                                                                           | `systemctl status nrpe`, revisar `journalctl -xeu nrpe`                                                              |
+| `Connection timed out`                      | Firewall bloqueando el puerto 5666                                                                      | Revisar reglas de `firewalld`/`ufw` y de cualquier firewall de red intermedio                                        |
+| SELinux bloquea la conexión (CentOS)        | Puerto no registrado en el contexto `nrpe_port_t`                                                       | `semanage port -a -t nrpe_port_t -p tcp 5666`                                                                        |
+| Permisos denegados al ejecutar plugins      | El usuario `nagios` no tiene permisos sobre algún recurso que consulta el plugin (ej. discos, procesos) | Revisar permisos del recurso o agregar el usuario `nagios` al grupo correspondiente                                  |
 
 ---
 
